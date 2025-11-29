@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pop Mix - Tomtify</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    #popmix-root {
+      min-height: 100vh;
+    }
+    header {
+      background-color: #000;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header a, header button {
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    main {
+      padding: 20px;
+    }
+    .playlist {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .song {
+      background-color: #181818;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .song-info {
+      display: flex;
+      align-items: center;
+    }
+    .song-image {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .song-info h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .play-btn, .pause-btn {
+      background-color: #1DB954;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .pause-btn {
+      background-color: #535353;
+    }
+
+    /* Player Bar Styles */
+    #player-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #181818;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #282828;
+      z-index: 1000;
+    }
+    .player-info {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+    }
+    .player-song-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .song-details h4 {
+      margin: 0;
+      font-size: 14px;
+      color: white;
+    }
+    .player-controls {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 600px;
+    }
+    .progress-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .progress-container span {
+      font-size: 12px;
+      color: #b3b3b3;
+      margin: 0 10px;
+    }
+    #progress-bar {
+      flex: 1;
+      height: 4px;
+      background: #535353;
+      outline: none;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    #progress-bar::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #1DB954;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    #progress-bar::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: #1DB954;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+    .control-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .control-buttons button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    .control-buttons button:hover {
+      background-color: #282828;
+    }
+    #play-pause-btn {
+      font-size: 30px;
+      background-color: #1DB954;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #play-pause-btn:hover {
+      background-color: #1ed760;
+      transform: scale(1.05);
+    }
+    .player-right {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    #loop-btn, #fullscreen-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    #loop-btn:hover, #fullscreen-btn:hover {
+      background-color: #282828;
+    }
+    #loop-btn.active {
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div id="popmix-root">
+    <header>
+      <a href="index.html">Home</a>
+      <h1>Pop Mix</h1>
+      <button>Search</button>
+    </header>
+    <main>
+      <div class="playlist">
+        <div class="song">
+          <div class="song-info">
+            <img src="https://i.scdn.co/image/ab67616d0000b2739164bafe9aaa168d93f4816a" alt="Sparks album cover" class="song-image">
+            <h3>Sparks - Coldplay</h3>
+          </div>
+          <div>
+            <button class="play-btn" onclick="playAudio('sparks')">Play</button>
+            <button class="pause-btn" onclick="pauseAudio('sparks')">Pause</button>
+          </div>
+        </div>
+        <div class="song">
+          <div class="song-info">
+            <img src="https://i.scdn.co/image/ab67616d0000b273c3fade2af1c66ea4b002ae18" alt="One Call Away album cover" class="song-image">
+            <h3>One Call Away - Charlie Puth</h3>
+          </div>
+          <div>
+            <button class="play-btn" onclick="playAudio('onecallaway')">Play</button>
+            <button class="pause-btn" onclick="pauseAudio('onecallaway')">Pause</button>
+          </div>
+        </div>
+        <div class="song">
+          <div class="song-info">
+            <img src="https://i.scdn.co/image/ab67616d0000b273d56159304b0098aa0873b839" alt="All of Me album cover" class="song-image">
+            <h3>All of Me - John Legend</h3>
+          </div>
+          <div>
+            <button class="play-btn" onclick="playAudio('allofme')">Play</button>
+            <button class="pause-btn" onclick="pauseAudio('allofme')">Pause</button>
+          </div>
+        </div>
+        <div class="song">
+          <div class="song-info">
+            <img src="https://i.scdn.co/image/ab67616d0000b273dfcca20f2ad63f47b99f2c3f" alt="Kacamata album cover" class="song-image">
+            <h3>Kacamata - Afgan</h3>
+          </div>
+          <div>
+            <button class="play-btn" onclick="playAudio('kacamata')">Play</button>
+            <button class="pause-btn" onclick="pauseAudio('kacamata')">Pause</button>
+          </div>
+        </div>
+        <div class="song">
+          <div class="song-info">
+            <img src="https://i.scdn.co/image/ab67616d0000b273e5a95573f1b91234630fd2cf" alt="A Sky Full of Stars album cover" class="song-image">
+            <h3>A Sky Full of Stars - Coldplay</h3>
+          </div>
+          <div>
+            <button class="play-btn" onclick="playAudio('askyfullofstars')">Play</button>
+            <button class="pause-btn" onclick="pauseAudio('askyfullofstars')">Pause</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Spotify-like Player Bar -->
+  <div id="player-bar">
+    <div class="player-info">
+      <img id="current-song-image" src="" alt="" class="player-song-image" style="display: none;">
+      <div class="song-details">
+        <h4 id="current-song-title">Select a song to play</h4>
+      </div>
+    </div>
+    <div class="player-controls">
+      <div class="progress-container">
+        <span id="current-time">0:00</span>
+        <input type="range" id="progress-bar" value="0" max="100" step="0.1">
+        <span id="total-time">0:00</span>
+      </div>
+      <div class="control-buttons">
+        <button id="play-pause-btn" class="play-btn">▶</button>
+      </div>
+    </div>
+    <div class="player-right">
+      <button id="loop-btn">🔁</button>
+      <button id="fullscreen-btn">⛶</button>
+    </div>
+  </div>
+
+  <script>
+    const songData = {
+      sparks: { title: 'Sparks - Coldplay', src: 'sparks.mp3', img: 'https://i.scdn.co/image/ab67616d0000b2739164bafe9aaa168d93f4816a' },
+      onecallaway: { title: 'One Call Away - Charlie Puth', src: 'OneCallAway.mp3', img: 'https://i.scdn.co/image/ab67616d0000b273c3fade2af1c66ea4b002ae18' },
+      allofme: { title: 'All of Me - John Legend', src: 'allofme.mp3', img: 'https://i.scdn.co/image/ab67616d0000b273d56159304b0098aa0873b839' },
+      kacamata: { title: 'Kacamata - Afgan', src: 'kacamata.mp3', img: 'https://i.scdn.co/image/ab67616d0000b273dfcca20f2ad63f47b99f2c3f' },
+      askyfullofstars: { title: 'A Sky Full of Stars - Coldplay', src: 'askyfullofstars.mp3', img: 'https://i.scdn.co/image/ab67616d0000b273e5a95573f1b91234630fd2cf' }
+    };
+
+    let currentAudio = null;
+    let currentSongKey = null;
+    let isPlaying = false;
+    let isLooping = false;
+
+    const songOrder = ['sparks', 'onecallaway', 'allofme', 'kacamata', 'askyfullofstars'];
+
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeSpan = document.getElementById('current-time');
+    const totalTimeSpan = document.getElementById('total-time');
+    const currentSongTitle = document.getElementById('current-song-title');
+    const loopBtn = document.getElementById('loop-btn');
+
+    function loadSong(key) {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+
+      currentSongKey = key;
+      currentAudio = new Audio(songData[key].src);
+      currentSongTitle.textContent = songData[key].title;
+      const currentSongImage = document.getElementById('current-song-image');
+      currentSongImage.src = songData[key].img;
+      currentSongImage.alt = songData[key].title + ' album cover';
+      currentSongImage.style.display = 'block';
+      isPlaying = false;
+      updatePlayPauseButton();
+
+      currentAudio.addEventListener('loadedmetadata', () => {
+        totalTimeSpan.textContent = formatTime(currentAudio.duration);
+        progressBar.max = currentAudio.duration;
+      });
+
+      currentAudio.addEventListener('timeupdate', () => {
+        progressBar.value = currentAudio.currentTime;
+        currentTimeSpan.textContent = formatTime(currentAudio.currentTime);
+      });
+
+      currentAudio.loop = isLooping;
+
+      currentAudio.addEventListener('ended', () => {
+        if (!isLooping) {
+          playNextSong();
+        }
+      });
+    }
+
+    function playAudio(key) {
+      if (currentSongKey !== key) {
+        loadSong(key);
+      }
+      if (currentAudio) {
+        currentAudio.play();
+        isPlaying = true;
+        updatePlayPauseButton();
+      }
+    }
+
+    function pauseAudio(key) {
+      if (currentSongKey === key && currentAudio) {
+        currentAudio.pause();
+        isPlaying = false;
+        updatePlayPauseButton();
+      }
+    }
+
+    function togglePlayPause() {
+      if (!currentAudio) return;
+
+      if (isPlaying) {
+        currentAudio.pause();
+        isPlaying = false;
+      } else {
+        currentAudio.play();
+        isPlaying = true;
+      }
+      updatePlayPauseButton();
+    }
+
+    function updatePlayPauseButton() {
+      playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function seekToTime() {
+      if (currentAudio) {
+        currentAudio.currentTime = progressBar.value;
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function playNextSong() {
+      const currentIndex = songOrder.indexOf(currentSongKey);
+      const nextIndex = (currentIndex + 1) % songOrder.length;
+      playAudio(songOrder[nextIndex]);
+    }
+
+    function toggleLoop() {
+      isLooping = !isLooping;
+      if (isLooping) {
+        loopBtn.classList.add('active');
+      } else {
+        loopBtn.classList.remove('active');
+      }
+    }
+
+    // Event listeners
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    progressBar.addEventListener('input', seekToTime);
+    loopBtn.addEventListener('click', toggleLoop);
+    document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+  </script>
+</body>
+</html>
